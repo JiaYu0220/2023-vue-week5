@@ -13,6 +13,7 @@ export default {
   methods: {
     openProductModal() {
       this.productModal.show();
+      this.quantity = 1;
     },
     closeProductModal() {
       this.productModal.hide();

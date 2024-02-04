@@ -66,11 +66,9 @@
                       </div>
                       <p v-else>{{product.price}} 元</p>
                       <div class="input-group mb-3">
-                        <input
-                          type="number"
-                          class="form-control"
-                          v-model.number="quantity"
-                        />
+                        <select class="form-select" v-model="quantity">
+                          <option v-for="i in 20" :key="`qty${i}`" :value="i">{{i}}</option>
+                        </select>
                         <span class="input-group-text">{{product.unit}}</span>
                         <button
                           type="button"
@@ -183,7 +181,7 @@
           <tr>
             <th></th>
             <th>品名</th>
-            <th style="width: 150px">數量/單位</th>
+            <th style="width: 350px">數量/單位</th>
             <th>單價</th>
           </tr>
         </thead>
@@ -195,6 +193,7 @@
                   type="button"
                   class="btn btn-outline-danger btn-sm"
                   @click="delCart(item.id)"
+                  :disabled="item.id === loadingItem"
                 >
                   <i
                     class="fas fa-spinner fa-pulse"
@@ -212,16 +211,33 @@
               <td>
                 <div class="input-group input-group-sm">
                   <div class="input-group mb-3">
+                    <button type="button" class="btn btn-outline-primary" @click="item.qty--;putCart(item);" :disabled="item.id === loadingItem" v-if="item.qty > 1">
+                      <i class="fas fa-spinner fa-pulse" v-if="item.id === loadingItem"></i>
+                      -
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-outline-danger btn-sm"
+                      @click="delCart(item.id)"
+                      v-else
+                      :disabled="item.id === loadingItem"
+                    >
+                      <i class="fas fa-spinner fa-pulse" v-if="loadingItem === item.id"></i>
+                      x
+                    </button>
                     <input
-                      min="1"
                       type="number"
                       class="form-control"
-                      v-model.number="item.qty"
-                      @change="putCart(item)"
+                      v-model="item.qty"
+                      readonly
                     />
                     <span class="input-group-text" id="basic-addon2"
                       >{{item.product.unit}}</span
                     >
+                    <button type="button" class="btn btn-outline-primary" @click="item.qty++;putCart(item);" :disabled="item.id === loadingItem">
+                      <i class="fas fa-spinner fa-pulse" v-if="item.id === loadingItem"></i>
+                      +
+                    </button>
                   </div>
                 </div>
               </td>

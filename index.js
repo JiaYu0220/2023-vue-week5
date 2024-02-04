@@ -33,17 +33,22 @@ const app = createApp({
     orderComponent,
   },
   mounted() {
-    this.getProducts();
-    this.getCarts();
+    (async ()=>{
+      try {
+        const loader = this.$loading.show();
+        await Promise.all([this.getProducts(), this.getCarts()]);
+        loader.hide();
+      } catch (error) {
+        alert(error.data.message)
+      }
+    })()
   },
   methods: {
     async getProducts() {
       try {
-        const loader = this.$loading.show();
         const url = `${apiUrl}/api/${apiPath}/products/all`;
         const { data } = await axios.get(url);
         this.products = data.products;
-        loader.hide();
       } catch (error) {
         console.log(error);
         alert(error.data.message);
@@ -52,11 +57,9 @@ const app = createApp({
 
     async getCarts() {
       try {
-        const loader = this.$loading.show();
         const url = `${apiUrl}/api/${apiPath}/cart`;
         const { data } = await axios.get(url);
         this.cart = data.data;
-        loader.hide();
       } catch (error) {
         console.log(error);
         alert(error.data.message);
